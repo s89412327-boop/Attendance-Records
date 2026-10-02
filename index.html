@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb">
+  <title>IT Branch - Attendance Record</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #7c3aed;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 1400px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    /* HEADER */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 32px 25px;
+      color: white;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,.22), transparent 25%),
+        linear-gradient(135deg, #1d4ed8, #4f46e5 55%, #7c3aed);
+      box-shadow: 0 15px 40px rgba(37, 99, 235, .25);
+      margin-bottom: 20px;
+    }
+
+    .hero::before {
+      content: "</>";
+      position: absolute;
+      right: 30px;
+      top: 10px;
+      font-size: 110px;
+      font-weight: 900;
+      opacity: .09;
+    }
+
+    .hero::after {
+      content: "010101  101001  110101  001101";
+      position: absolute;
+      right: 20px;
+      bottom: 15px;
+      font-size: 13px;
+      opacity: .14;
+      letter-spacing: 3px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      opacity: .9;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 62px);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      opacity: .9;
+    }
+
+    /* NAV */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      border: 0;
+      background: white;
+      color: var(--muted);
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(15,23,42,.06);
+    }
+
+    .tab.active {
+      color: white;
+      background: var(--primary);
+    }
+
+    /* CARDS */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(15,23,42,.05);
+    }
+
+    .stat-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(15,23,42,.05);
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .panel-title {
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .controls {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    input,
+    select {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 11px 13px;
+      background: white;
+      color: var(--text);
+      outline: none;
+      min-width: 150px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 11px;
+      padding: 11px 15px;
+      font-weight: 800;
+      color: white;
+      background: var(--primary);
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn.secondary {
+      background: #475569;
+    }
+
+    .btn.success {
+      background: var(--success);
+    }
+
+    .btn.danger {
+      background: var(--danger);
+    }
+
+    .btn.warning {
+      background: var(--warning);
+    }
+
+    .btn.light {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    /* SUBJECTS */
+    .subject-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 12px;
+    }
+
+    .subject-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(145deg, #fff, #f8fafc);
+      transition: .2s;
+    }
+
+    .subject-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15,23,42,.08);
+    }
+
+    .subject-icon {
+      font-size: 32px;
+      margin-bottom: 7px;
+    }
+
+    .subject-name {
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .subject-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .small-btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #e2e8f0;
+    }
+
+    .small-btn.delete {
+      color: white;
+      background: var(--danger);
+    }
+
+    /* TABLE */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 850px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f8fafc;
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .student-name {
+      font-weight: 800;
+    }
+
+    .roll {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .attendance-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .attendance-btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .present {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .absent {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .leave {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .attendance-btn.selected.present {
+      background: var(--success);
+      color: white;
+    }
+
+    .attendance-btn.selected.absent {
+      background: var(--danger);
+      color: white;
+    }
+
+    .attendance-btn.selected.leave {
+      background: var(--warning);
+      color: white;
+    }
+
+    .percent {
+      font-weight: 900;
+    }
+
+    .good {
+      color: var(--success);
+    }
+
+    .medium {
+      color: var(--warning);
+    }
+
+    .bad {
+      color: var(--danger);
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15,23,42,.6);
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(500px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 30px 70px rgba(0,0,0,.25);
+    }
+
+    .modal h2 {
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translate(-50%, 100px);
+      background: #0f172a;
+      color: white;
+      padding: 13px 18px;
+      border-radius: 12px;
+      z-index: 200;
+      font-weight: 700;
+      transition: .3s;
+      opacity: 0;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 35px 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 10px 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    footer strong {
+      color: var(--primary);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        padding: 10px;
+      }
+
+      .hero {
+        padding: 25px 18px;
+        border-radius: 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .stat {
+        padding: 14px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      input,
+      select {
+        min-width: 100%;
+      }
+
+      .controls {
+        width: 100%;
+      }
+
+      .controls > * {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="eyebrow">💻 TECHNOLOGY • CODING • ENGINEERING</div>
+      <h1>IT BRANCH</h1>
+      <p>📊 Attendance Record • Smart • Simple • Organized</p>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab active" onclick="showTab('dashboard', this)">🏠 Dashboard</button>
+    <button class="tab" onclick="showTab('attendance', this)">📅 Attendance</button>
+    <button class="tab" onclick="showTab('students', this)">👨‍🎓 Students</button>
+    <button class="tab" onclick="showTab('subjects', this)">📚 Subjects</button>
+    <button class="tab" onclick="showTab('records', this)">📊 Records</button>
+    <button class="tab" onclick="showTab('backup', this)">💾 Backup</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <section id="dashboardTab">
+
+    <div class="grid">
+
+      <div class="stat">
+        <div class="stat-icon">👨‍🎓</div>
+        <div class="stat-value" id="statStudents">0</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-icon">📚</div>
+        <div class="stat-value" id="statSubjects">0</div>
+        <div class="stat-label">Subjects</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value" id="statDays">0</div>
+        <div class="stat-label">Attendance Days</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="statAverage">0%</div>
+        <div class="stat-label">Overall Attendance</div>
+      </div>
+
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">👋 Welcome to IT Branch</div>
+          <p style="color:var(--muted); margin-top:5px;">
+            Manage students, subjects and daily attendance from one place.
+          </p>
+        </div>
+
+        <button class="btn" onclick="showTabByName('attendance')">
+          📅 Mark Attendance
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📚 Your Subjects</div>
+        <button class="btn" onclick="openSubjectModal()">➕ Add Subject</button>
+      </div>
+
+      <div id="dashboardSubjects" class="subject-grid"></div>
+    </div>
+
+  </section>
+
+  <!-- ATTENDANCE -->
+  <section id="attendanceTab" class="hidden">
+
+    <div class="panel">
+
+      <div class="panel-header">
+
+        <div>
+          <div class="panel-title">📅 Daily Attendance</div>
+          <p style="color:var(--muted); margin-top:4px;">
+            Select date and subject, then mark attendance.
+          </p>
+        </div>
+
+        <div class="controls">
+          <input type="date" id="attendanceDate" onchange="renderAttendance()">
+
+          <select id="attendanceSubject" onchange="renderAttendance()">
+          </select>
+
+          <button class="btn success" onclick="markAll('P')">
+            🟢 All Present
+          </button>
+
+          <button class="btn danger" onclick="markAll('A')">
+            🔴 All Absent
+          </button>
+        </div>
+
+      </div>
+
+      <div class="table-wrap">
+        <table>
+
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Roll No.</th>
+              <th>Attendance</th>
+            </tr>
+          </thead>
+
+          <tbody id="attendanceBody"></tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- STUDENTS -->
+  <section id="studentsTab" class="hidden">
+
+    <div class="panel">
+
+      <div class="panel-header">
+
+        <div>
+          <div class="panel-title">👨‍🎓 Students</div>
+          <p style="color:var(--muted); margin-top:4px;">
+            Add, edit or remove students.
+          </p>
+        </div>
+
+        <div class="controls">
+          <input
+            id="studentSearch"
+            placeholder="🔎 Search student..."
+            oninput="renderStudents()"
+          >
+
+          <button class="btn" onclick="openStudentModal()">
+            ➕ Add Student
+          </button>
+        </div>
+
+      </div>
+
+      <div class="table-wrap">
+        <table>
+
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Roll No.</th>
+              <th>Attendance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="studentsBody"></tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SUBJECTS -->
+  <section id="subjectsTab" class="hidden">
+
+    <div class="panel">
+
+      <div class="panel-header">
+
+        <div>
+          <div class="panel-title">📚 Manage Subjects</div>
+          <p style="color:var(--muted); margin-top:4px;">
+            Add, rename, change icon or delete subjects anytime.
+          </p>
+        </div>
+
+        <button class="btn" onclick="openSubjectModal()">
+          ➕ Add Subject
+        </button>
+
+      </div>
+
+      <div id="subjectsList" class="subject-grid"></div>
+
+    </div>
+
+  </section>
+
+  <!-- RECORDS -->
+  <section id="recordsTab" class="hidden">
+
+    <div class="panel">
+
+      <div class="panel-header">
+
+        <div>
+          <div class="panel-title">📊 Attendance Records</div>
+          <p style="color:var(--muted); margin-top:4px;">
+            Subject-wise attendance percentage.
+          </p>
+        </div>
+
+        <select id="recordSubject" onchange="renderRecords()"></select>
+
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Roll No.</th>
+              <th>Present</th>
+              <th>Absent</th>
+              <th>Leave</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+
+          <tbody id="recordsBody"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- BACKUP -->
+  <section id="backupTab" class="hidden">
+
+    <div class="panel">
+
+      <div class="panel-title">💾 Backup & Restore</div>
+
+      <p style="color:var(--muted); margin:10px 0 20px;">
+        Keep a backup of your students, subjects and attendance records.
+      </p>
+
+      <div class="controls">
+
+        <button class="btn success" onclick="exportJSON()">
+          ⬇️ Download Backup
+        </button>
+
+        <label class="btn secondary">
+          ⬆️ Restore Backup
+          <input
+            type="file"
+            id="restoreFile"
+            accept=".json"
+            onchange="restoreJSON(event)"
+            hidden
+          >
+        </label>
+
+        <button class="btn warning" onclick="exportCSV()">
+          📄 Export CSV
+        </button>
+
+        <button class="btn danger" onclick="resetEverything()">
+          🗑️ Reset App
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <footer>
+    💻 IT Branch Attendance Record<br>
+    <strong>Created by Shobhit Rathaur</strong>
+  </footer>
+
+</div>
+
+
+<!-- STUDENT MODAL -->
+<div class="modal-backdrop" id="studentModal">
+
+  <div class="modal">
+
+    <h2 id="studentModalTitle">👨‍🎓 Add Student</h2>
+
+    <div class="form-group">
+      <label>Student Name</label>
+      <input id="studentName" placeholder="Enter student name">
+    </div>
+
+    <div class="form-group">
+      <label>Roll Number</label>
+      <input id="studentRoll" placeholder="Enter roll number">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn light" onclick="closeModal('studentModal')">
+        Cancel
+      </button>
+
+      <button class="btn" onclick="saveStudent()">
+        💾 Save
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- SUBJECT MODAL -->
+<div class="modal-backdrop" id="subjectModal">
+
+  <div class="modal">
+
+    <h2 id="subjectModalTitle">📚 Add Subject</h2>
+
+    <div class="form-group">
+      <label>Subject Name</label>
+      <input id="subjectName" placeholder="e.g. Programming">
+    </div>
+
+    <div class="form-group">
+      <label>Subject Icon / Emoji</label>
+      <input id="subjectIcon" placeholder="💻" maxlength="4">
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn light" onclick="closeModal('subjectModal')">
+        Cancel
+      </button>
+
+      <button class="btn" onclick="saveSubject()">
+        💾 Save
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+  /* =========================================================
+     DATA
+  ========================================================= */
+
+  const STORAGE_KEY = "it_branch_attendance_v1";
+
+  let data = loadData();
+
+  let editingStudentId = null;
+  let editingSubjectId = null;
+
+
+  function defaultData() {
+
+    const students = [];
+
+    for (let i = 1; i <= 77; i++) {
+
+      students.push({
+        id: crypto.randomUUID(),
+        name: "Student " + i,
+        roll: String(i).padStart(3, "0")
+      });
+
+    }
+
+    const subjects = [
+
+      {
+        id: crypto.randomUUID(),
+        name: "Programming",
+        icon: "💻"
+      },
+
+      {
+        id: crypto.randomUUID(),
+        name: "Mathematics",
+        icon: "📐"
+      },
+
+      {
+        id: crypto.randomUUID(),
+        name: "Physics",
+        icon: "⚛️"
+      },
+
+      {
+        id: crypto.randomUUID(),
+        name: "Environment",
+        icon: "🌱"
+      },
+
+      {
+        id: crypto.randomUUID(),
+        name: "Electronics",
+        icon: "🔌"
+      }
+
+    ];
+
+    return {
+      students,
+      subjects,
+
+      /*
+        attendance:
+        {
+          date: {
+            subjectId: {
+              studentId: "P" / "A" / "L"
+            }
+          }
+        }
+      */
+
+      attendance: {}
+    };
+  }
+
+
+  function loadData() {
+
+    try {
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (saved) {
+
+        const parsed = JSON.parse(saved);
+
+        if (
+          parsed &&
+          Array.isArray(parsed.students) &&
+          Array.isArray(parsed.subjects)
+        ) {
+
+          return parsed;
+
+        }
+
+      }
+
+    } catch (error) {
+
+      console.error("Could not load data:", error);
+
+    }
+
+    return defaultData();
+  }
+
+
+  function saveData() {
+
+    try {
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(data)
+      );
+
+    } catch (error) {
+
+      console.error("Could not save data:", error);
+
+      showToast("⚠️ Could not save data");
+
+    }
+
+  }
+
+
+  /* =========================================================
+     INITIALIZATION
+  ========================================================= */
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const today = new Date()
+      .toISOString()
+      .split("T")[0];
+
+    document.getElementById("attendanceDate").value = today;
+
+    renderAll();
+
+  });
+
+
+  function renderAll() {
+
+    renderStats();
+
+    renderSubjects();
+
+    renderDashboardSubjects();
+
+    renderSubjectSelects();
+
+    renderAttendance();
+
+    renderStudents();
+
+    renderRecords();
+
+  }
+
+
+  /* =========================================================
+     TABS
+  ========================================================= */
+
+  function showTab(name, button) {
+
+    const tabs = [
+      "dashboard",
+      "attendance",
+      "students",
+      "subjects",
+      "records",
+      "backup"
+    ];
+
+    tabs.forEach(tab => {
+
+      const element =
+        document.getElementById(tab + "Tab");
+
+      if (element) {
+
+        element.classList.toggle(
+          "hidden",
+          tab !== name
+        );
+
+      }
+
+    });
+
+    document.querySelectorAll(".tab")
+      .forEach(btn => btn.classList.remove("active"));
+
+    if (button) {
+
+      button.classList.add("active");
+
+    }
+
+  }
+
+
+  function showTabByName(name) {
+
+    const buttons = document.querySelectorAll(".tab");
+
+    buttons.forEach(button => {
+
+      if (
+        button.textContent
+          .toLowerCase()
+          .includes(name === "attendance" ? "attendance" : "")
+      ) {
+
+        showTab(name, button);
+
+      }
+
+    });
+
+    if (name === "attendance") {
+
+      document.querySelectorAll(".tab")[1].click();
+
+    }
+
+  }
+
+
+  /* =========================================================
+     STATS
+  ========================================================= */
+
+  function renderStats() {
+
+    document.getElementById("statStudents").textContent =
+      data.students.length;
+
+    document.getElementById("statSubjects").textContent =
+      data.subjects.length;
+
+    const days = Object.keys(data.attendance);
+
+    document.getElementById("statDays").textContent =
+      days.length;
+
+    let total = 0;
+    let present = 0;
+
+    days.forEach(date => {
+
+      Object.keys(data.attendance[date] || {})
+        .forEach(subjectId => {
+
+          const records =
+            data.attendance[date][subjectId] || {};
+
+          Object.values(records).forEach(status => {
+
+            total++;
+
+            if (status === "P") {
+              present++;
+            }
+
+          });
+
+        });
+
+    });
+
+    const percentage =
+      total === 0
+        ? 0
+        : Math.round((present / total) * 100);
+
+    document.getElementById("statAverage").textContent =
+      percentage + "%";
+
+  }
+
+
+  /* =========================================================
+     SUBJECTS
+  ========================================================= */
+
+  function renderSubjects() {
+
+    const container =
+      document.getElementById("subjectsList");
+
+    if (data.subjects.length === 0) {
+
+      container.innerHTML =
+        `<div class="empty">
+          📚 No subjects yet.<br><br>
+          Add your first subject.
+        </div>`;
+
+      return;
+
+    }
+
+    container.innerHTML =
+      data.subjects.map(subject => `
+
+        <div class="subject-card">
+
+          <div class="subject-icon">
+            ${escapeHTML(subject.icon)}
+          </div>
+
+          <div class="subject-name">
+            ${escapeHTML(subject.name)}
+          </div>
+
+          <div style="color:var(--muted);font-size:12px;">
+            Attendance subject
+          </div>
+
+          <div class="subject-actions">
+
+            <button
+              class="small-btn"
+              onclick="editSubject('${subject.id}')"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              class="small-btn delete"
+              onclick="deleteSubject('${subject.id}')"
+            >
+              🗑️ Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
+  function renderDashboardSubjects() {
+
+    const container =
+      document.getElementById("dashboardSubjects");
+
+    if (data.subjects.length === 0) {
+
+      container.innerHTML =
+        `<div class="empty">
+          No subjects added.
+        </div>`;
+
+      return;
+
+    }
+
+    container.innerHTML =
+      data.subjects.map(subject => `
+
+        <div class="subject-card">
+
+          <div class="subject-icon">
+            ${escapeHTML(subject.icon)}
+          </div>
+
+          <div class="subject-name">
+            ${escapeHTML(subject.name)}
+          </div>
+
+          <div style="color:var(--muted);font-size:12px;">
+            Click Subjects to manage
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }
+
+
+  function renderSubjectSelects() {
+
+    const attendanceSelect =
+      document.getElementById("attendanceSubject");
+
+    const recordSelect =
+      document.getElementById("recordSubject");
+
+    const currentAttendance =
+      attendanceSelect.value;
+
+    const currentRecord =
+      recordSelect.value;
+
+    const options =
+      data.subjects.map(subject => `
+
+        <option value="${subject.id}">
+          ${subject.icon} ${escapeHTML(subject.name)}
+        </option>
+
+      `).join("");
+
+    attendanceSelect.innerHTML =
+      options;
+
+    recordSelect.innerHTML =
+      options;
+
+    if (
+      data.subjects.some(s => s.id === currentAttendance)
+    ) {
+
+      attendanceSelect.value = currentAttendance;
+
+    }
+
+    if (
+      data.subjects.some(s => s.id === currentRecord)
+    ) {
+
+      recordSelect.value = currentRecord;
+
+    }
+
+  }
+
+
+  function openSubjectModal(subjectId = null) {
+
+    editingSubjectId = subjectId;
+
+    const modal =
+      document.getElementById("subjectModal");
+
+    const title =
+      document.getElementById("subjectModalTitle");
+
+    if (subjectId) {
+
+      const subject =
+        data.subjects.find(s => s.id === subjectId);
+
+      title.textContent = "✏️ Edit Subject";
+
+      document.getElementById("subjectName").value =
+        subject.name;
+
+      document.getElementById("subjectIcon").value =
+        subject.icon;
+
+    } else {
+
+      title.textContent = "📚 Add Subject";
+
+      document.getElementById("subjectName").value = "";
+
+      document.getElementById("subjectIcon").value = "📚";
+
+    }
+
+    modal.classList.add("show");
+
+    setTimeout(() => {
+
+      document.getElementById("subjectName").focus();
+
+    }, 50);
+
+  }
+
+
+  function editSubject(id) {
+
+    openSubjectModal(id);
+
+  }
+
+
+  function saveSubject() {
+
+    const name =
+      document.getElementById("subjectName")
+        .value.trim();
+
+    const icon =
+      document.getElementById("subjectIcon")
+        .value.trim() || "📚";
+
+    if (!name) {
+
+      showToast("⚠️ Enter subject name");
+
+      return;
+
+    }
+
+    if (editingSubjectId) {
+
+      const subject =
+        data.subjects.find(
+          s => s.id === editingSubjectId
+        );
+
+      if (subject) {
+
+        subject.name = name;
+        subject.icon = icon;
+
+      }
+
+      showToast("✅ Subject updated");
+
+    } else {
+
+      data.subjects.push({
+
+        id: crypto.randomUUID(),
+
+        name,
+
+        icon
+
+      });
+
+      showToast("✅ Subject added");
+
+    }
+
+    saveData();
+
+    closeModal("subjectModal");
+
+    renderAll();
+
+  }
+
+
+  function deleteSubject(id) {
+
+    const subject =
+      data.subjects.find(s => s.id === id);
+
+    if (!subject) return;
+
+    const ok =
+      confirm(
+        `Delete "${subject.name}"?\n\nAttendance records for this subject will also be removed.`
+      );
+
+    if (!ok) return;
+
+    data.subjects =
+      data.subjects.filter(
+        s => s.id !== id
+      );
+
+    Object.keys(data.attendance)
+      .forEach(date => {
+
+        if (data.attendance[date]) {
+
+          delete data.attendance[date][id];
+
+        }
+
+      });
+
+    saveData();
+
+    renderAll();
+
+    showToast("🗑️ Subject deleted");
+
+  }
+
+
+  /* =========================================================
+     STUDENTS
+  ========================================================= */
+
+  function renderStudents() {
+
+    const tbody =
+      document.getElementById("studentsBody");
+
+    const search =
+      document.getElementById("studentSearch")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const students =
+      data.students.filter(student =>
+
+        student.name.toLowerCase().includes(search) ||
+
+        student.roll.toLowerCase().includes(search)
+
+      );
+
+    if (students.length === 0) {
+
+      tbody.innerHTML =
+        `<tr>
+          <td colspan="5" class="empty">
+            👨‍🎓 No students found.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+    tbody.innerHTML =
+      students.map((student, index) => `
+
+        <tr>
+
+          <td>${index + 1}</td>
+
+          <td>
+            <div class="student-name">
+              ${escapeHTML(student.name)}
+            </div>
+          </td>
+
+          <td>
+            <span class="roll">
+              ${escapeHTML(student.roll)}
+            </span>
+          </td>
+
+          <td>
+            ${getStudentOverall(student.id)}%
+          </td>
+
+          <td>
+
+            <button
+              class="small-btn"
+              onclick="editStudent('${student.id}')"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              class="small-btn delete"
+              onclick="deleteStudent('${student.id}')"
+            >
+              🗑️ Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("");
+
+  }
+
+
+  function openStudentModal(studentId = null) {
+
+    editingStudentId = studentId;
+
+    const modal =
+      document.getElementById("studentModal");
+
+    const title =
+      document.getElementById("studentModalTitle");
+
+    if (studentId) {
+
+      const student =
+        data.students.find(
+          s => s.id === studentId
+        );
+
+      title.textContent = "✏️ Edit Student";
+
+      document.getElementById("studentName").value =
+        student.name;
+
+      document.getElementById("studentRoll").value =
+        student.roll;
+
+    } else {
+
+      title.textContent = "👨‍🎓 Add Student";
+
+      document.getElementById("studentName").value =
+        "";
+
+      document.getElementById("studentRoll").value =
+        String(data.students.length + 1)
+          .padStart(3, "0");
+
+    }
+
+    modal.classList.add("show");
+
+  }
+
+
+  function editStudent(id) {
+
+    openStudentModal(id);
+
+  }
+
+
+  function saveStudent() {
+
+    const name =
+      document.getElementById("studentName")
+        .value.trim();
+
+    const roll =
+      document.getElementById("studentRoll")
+        .value.trim();
+
+    if (!name) {
+
+      showToast("⚠️ Enter student name");
+
+      return;
+
+    }
+
+    if (!roll) {
+
+      showToast("⚠️ Enter roll number");
+
+      return;
+
+    }
+
+    if (editingStudentId) {
+
+      const student =
+        data.students.find(
+          s => s.id === editingStudentId
+        );
+
+      if (student) {
+
+        student.name = name;
+        student.roll = roll;
+
+      }
+
+      showToast("✅ Student updated");
+
+    } else {
+
+      data.students.push({
+
+        id: crypto.randomUUID(),
+
+        name,
+
+        roll
+
+      });
+
+      showToast("✅ Student added");
+
+    }
+
+    saveData();
+
+    closeModal("studentModal");
+
+    renderAll();
+
+  }
+
+
+  function deleteStudent(id) {
+
+    const student =
+      data.students.find(
+        s => s.id === id
+      );
+
+    if (!student) return;
+
+    const ok =
+      confirm(
+        `Delete ${student.name}?\n\nTheir attendance records will also be removed.`
+      );
+
+    if (!ok) return;
+
+    data.students =
+      data.students.filter(
+        s => s.id !== id
+      );
+
+    Object.keys(data.attendance)
+      .forEach(date => {
+
+        Object.keys(
+          data.attendance[date] || {}
+        ).forEach(subjectId => {
+
+          delete data.attendance[date][subjectId][id];
+
+        });
+
+      });
+
+    saveData();
+
+    renderAll();
+
+    showToast("🗑️ Student deleted");
+
+  }
+
+
+  /* =========================================================
+     ATTENDANCE
+  ========================================================= */
+
+  function getAttendanceMap(
+    date,
+    subjectId,
+    create = true
+  ) {
+
+    if (!data.attendance[date] && create) {
+
+      data.attendance[date] = {};
+
+    }
+
+    if (
+      data.attendance[date] &&
+      !data.attendance[date][subjectId] &&
+      create
+    ) {
+
+      data.attendance[date][subjectId] = {};
+
+    }
+
+    return (
+      data.attendance[date]?.[subjectId] || {}
+    );
+
+  }
+
+
+  function renderAttendance() {
+
+    const tbody =
+      document.getElementById("attendanceBody");
+
+    const date =
+      document.getElementById("attendanceDate").value;
+
+    const subjectId =
+      document.getElementById("attendanceSubject").value;
+
+    if (!date || !subjectId) {
+
+      tbody.innerHTML =
+        `<tr>
+          <td colspan="4" class="empty">
+            📚 Add a subject first.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+    const records =
+      getAttendanceMap(
+        date,
+        subjectId,
+        false
+      );
+
+    if (data.students.length === 0) {
+
+      tbody.innerHTML =
+        `<tr>
+          <td colspan="4" class="empty">
+            👨‍🎓 Add students first.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+    tbody.innerHTML =
+      data.students.map((student, index) => {
+
+        const status =
+          records[student.id] || "";
+
+        return `
+
+          <tr>
+
+            <td>${index + 1}</td>
+
+            <td>
+              <div class="student-name">
+                ${escapeHTML(student.name)}
+              </div>
+            </td>
+
+            <td>
+              <span class="roll">
+                ${escapeHTML(student.roll)}
+              </span>
+            </td>
+
+            <td>
+
+              <div class="attendance-buttons">
+
+                <button
+                  class="attendance-btn present
+                  ${status === "P" ? "selected" : ""}"
+                  onclick="setAttendance('${student.id}', 'P')"
+                >
+                  🟢 P
+                </button>
+
+                <button
+                  class="attendance-btn absent
+                  ${status === "A" ? "selected" : ""}"
+                  onclick="setAttendance('${student.id}', 'A')"
+                >
+                  🔴 A
+                </button>
+
+                <button
+                  class="attendance-btn leave
+                  ${status === "L" ? "selected" : ""}"
+                  onclick="setAttendance('${student.id}', 'L')"
+                >
+                  🟡 L
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  function setAttendance(studentId, status) {
+
+    const date =
+      document.getElementById("attendanceDate").value;
+
+    const subjectId =
+      document.getElementById("attendanceSubject").value;
+
+    if (!date || !subjectId) {
+
+      showToast("⚠️ Select date and subject");
+
+      return;
+
+    }
+
+    const records =
+      getAttendanceMap(
+        date,
+        subjectId,
+        true
+      );
+
+    records[studentId] = status;
+
+    saveData();
+
+    renderAttendance();
+
+    renderStats();
+
+  }
+
+
+  function markAll(status) {
+
+    const date =
+      document.getElementById("attendanceDate").value;
+
+    const subjectId =
+      document.getElementById("attendanceSubject").value;
+
+    if (!date || !subjectId) {
+
+      showToast("⚠️ Select date and subject");
+
+      return;
+
+    }
+
+    const records =
+      getAttendanceMap(
+        date,
+        subjectId,
+        true
+      );
+
+    data.students.forEach(student => {
+
+      records[student.id] = status;
+
+    });
+
+    saveData();
+
+    renderAttendance();
+
+    renderStats();
+
+    showToast(
+      status === "P"
+        ? "🟢 Everyone marked Present"
+        : "🔴 Everyone marked Absent"
+    );
+
+  }
+
+
+  /* =========================================================
+     RECORDS
+  ========================================================= */
+
+  function renderRecords() {
+
+    const tbody =
+      document.getElementById("recordsBody");
+
+    const subjectId =
+      document.getElementById("recordSubject").value;
+
+    if (!subjectId) {
+
+      tbody.innerHTML =
+        `<tr>
+          <td colspan="7" class="empty">
+            📚 Add a subject first.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+    tbody.innerHTML =
+      data.students.map((student, index) => {
+
+        const stats =
+          getStudentSubjectStats(
+            student.id,
+            subjectId
+          );
+
+        const cls =
+          stats.percent >= 75
+            ? "good"
+            : stats.percent >= 60
+              ? "medium"
+              : "bad";
+
+        return `
+
+          <tr>
+
+            <td>${index + 1}</td>
+
+            <td class="student-name">
+              ${escapeHTML(student.name)}
+            </td>
+
+            <td class="roll">
+              ${escapeHTML(student.roll)}
+            </td>
+
+            <td>${stats.present}</td>
+
+            <td>${stats.absent}</td>
+
+            <td>${stats.leave}</td>
+
+            <td class="percent ${cls}">
+              ${stats.percent}%
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  function getStudentSubjectStats(
+    studentId,
+    subjectId
+  ) {
+
+    let present = 0;
+    let absent = 0;
+    let leave = 0;
+
+    Object.values(data.attendance)
+      .forEach(day => {
+
+        const records =
+          day[subjectId];
+
+        if (!records) return;
+
+        const status =
+          records[studentId];
+
+        if (status === "P") present++;
+        if (status === "A") absent++;
+        if (status === "L") leave++;
+
+      });
+
+    const total =
+      present + absent + leave;
+
+    const percent =
+      total === 0
+        ? 0
+        : Math.round(
+            (present / total) * 100
+          );
+
+    return {
+      present,
+      absent,
+      leave,
+      total,
+      percent
+    };
+
+  }
+
+
+  function getStudentOverall(studentId) {
+
+    let present = 0;
+    let total = 0;
+
+    Object.values(data.attendance)
+      .forEach(day => {
+
+        Object.values(day)
+          .forEach(records => {
+
+            const status =
+              records[studentId];
+
+            if (!status) return;
+
+            total++;
+
+            if (status === "P") {
+              present++;
+            }
+
+          });
+
+      });
+
+    if (total === 0) return 0;
+
+    return Math.round(
+      (present / total) * 100
+    );
+
+  }
+
+
+  /* =========================================================
+     BACKUP
+  ========================================================= */
+
+  function exportJSON() {
+
+    const json =
+      JSON.stringify(data, null, 2);
+
+    downloadFile(
+      json,
+      "IT-Branch-Attendance-Backup.json",
+      "application/json"
+    );
+
+    showToast("⬇️ Backup downloaded");
+
+  }
+
+
+  function restoreJSON(event) {
+
+    const file =
+      event.target.files[0];
+
+    if (!file) return;
+
+    const reader =
+      new FileReader();
+
+    reader.onload = function(e) {
+
+      try {
+
+        const imported =
+          JSON.parse(e.target.result);
+
+        if (
+          !imported ||
+          !Array.isArray(imported.students) ||
+          !Array.isArray(imported.subjects) ||
+          typeof imported.attendance !== "object"
+        ) {
+
+          throw new Error("Invalid backup");
+
+        }
+
+        const ok =
+          confirm(
+            "Restore this backup?\n\nCurrent data will be replaced."
+          );
+
+        if (!ok) return;
+
+        data = imported;
+
+        saveData();
+
+        renderAll();
+
+        showToast("✅ Backup restored");
+
+      } catch (error) {
+
+        alert(
+          "❌ Invalid backup file."
+        );
+
+      }
+
+    };
+
+    reader.readAsText(file);
+
+    event.target.value = "";
+
+  }
+
+
+  function exportCSV() {
+
+    let csv =
+      "Date,Subject,Student,Roll Number,Status\n";
+
+    Object.keys(data.attendance)
+      .sort()
+      .forEach(date => {
+
+        Object.keys(
+          data.attendance[date] || {}
+        ).forEach(subjectId => {
+
+          const subject =
+            data.subjects.find(
+              s => s.id === subjectId
+            );
+
+          const subjectName =
+            subject
+              ? subject.name
+              : "Deleted Subject";
+
+          const records =
+            data.attendance[date][subjectId];
+
+          Object.keys(records)
+            .forEach(studentId => {
+
+              const student =
+                data.students.find(
+                  s => s.id === studentId
+                );
+
+              if (!student) return;
+
+              const status =
+                records[studentId];
+
+              csv += [
+                date,
+                csvSafe(subjectName),
+                csvSafe(student.name),
+                csvSafe(student.roll),
+                status
+              ].join(",") + "\n";
+
+            });
+
+        });
+
+      });
+
+    downloadFile(
+      csv,
+      "IT-Branch-Attendance.csv",
+      "text/csv"
+    );
+
+    showToast("📄 CSV downloaded");
+
+  }
+
+
+  function csvSafe(value) {
+
+    return `"${String(value)
+      .replace(/"/g, '""')}"`;
+
+  }
+
+
+  /* =========================================================
+     RESET
+  ========================================================= */
+
+  function resetEverything() {
+
+    const first =
+      confirm(
+        "⚠️ This will delete ALL students, subjects and attendance data.\n\nContinue?"
+      );
+
+    if (!first) return;
+
+    const second =
+      confirm(
+        "Are you absolutely sure?"
+      );
+
+    if (!second) return;
+
+    data = defaultData();
+
+    saveData();
+
+    renderAll();
+
+    showToast("🗑️ App reset successfully");
+
+  }
+
+
+  /* =========================================================
+     MODAL
+  ========================================================= */
+
+  function closeModal(id) {
+
+    document
+      .getElementById(id)
+      .classList.remove("show");
+
+  }
+
+
+  document
+    .querySelectorAll(".modal-backdrop")
+    .forEach(backdrop => {
+
+      backdrop.addEventListener(
+        "click",
+        function(event) {
+
+          if (event.target === backdrop) {
+
+            backdrop.classList.remove("show");
+
+          }
+
+        }
+      );
+
+    });
+
+
+  /* =========================================================
+     DOWNLOAD
+  ========================================================= */
+
+  function downloadFile(
+    content,
+    filename,
+    type
+  ) {
+
+    const blob =
+      new Blob(
+        [content],
+        { type }
+      );
+
+    const url =
+      URL.createObjectURL(blob);
+
+    const a =
+      document.createElement("a");
+
+    a.href = url;
+
+    a.download = filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    URL.revokeObjectURL(url);
+
+  }
+
+
+  /* =========================================================
+     TOAST
+  ========================================================= */
+
+  let toastTimer;
+
+  function showToast(message) {
+
+    const toast =
+      document.getElementById("toast");
+
+    toast.textContent =
+      message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+      setTimeout(() => {
+
+        toast.classList.remove("show");
+
+      }, 2200);
+
+  }
+
+
+  /* =========================================================
+     SECURITY / HTML ESCAPE
+  ========================================================= */
+
+  function escapeHTML(value) {
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+</script>
+
+</body>
+            </html>
